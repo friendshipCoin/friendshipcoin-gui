@@ -45,7 +45,7 @@ _Yarn_  (npm alternative)
 ```
 npm install -g yarn
 ```
-The application may work fine with `npm` but yarn is recommended.  
+The application may work fine with `npm` but `yarn` is recommended.  
 
 ### Get the Source
 ```
