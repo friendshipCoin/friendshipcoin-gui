@@ -11,3 +11,4 @@ yarn.lock
 .lock
 .electron-vue
 .idea
+/src/friendshipcoin-darwin-x64

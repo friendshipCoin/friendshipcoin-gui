@@ -8,6 +8,8 @@
 # FriendshipCoin GUI Wallet
 Cross Platform Desktop FSC Wallet built with Electron.  This is alpha software so use at your own risk.  Make sure you back up your FriendshipCoin wallet before running this.
 
+If you have any questions or need assistance please join our [discord](https://discord.gg/UXR9We) and someone will help you.
+
 ### Pre-built Downloads
 * _Windows_ - https://friendshipcoin.com/download/FriendshipCoinWin64.zip
 

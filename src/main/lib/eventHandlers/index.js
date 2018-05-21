@@ -71,7 +71,6 @@ module.exports = function (main) {
     })
 
     self.main.ipcMain.on('GET_RECEIVING_ADDRESS_LIST', (event, arg) => {
-      console.log('GET THE LIST')
       async.parallel([
         function (done) {
           self.app.wallet.listAddressGroupings(function (err, res) {

@@ -226,23 +226,17 @@ module.exports = function (main) {
       }
     }
 
-    console.log(useOutputs)
-
     async.waterfall([
       (next) => {
         self._request('createrawtransaction', [useOutputs, sendTo], next)
       },
       (rawtx, next) => {
-        console.log('rawtx', rawtx)
         self._request('signrawtransaction', [rawtx], next)
       },
       (signedtx, next) => {
-        console.log('signedtx', signedtx)
         self._request('sendrawtransaction', [signedtx.hex], next)
       }
     ], (err, res) => {
-      console.log('sent', res)
-      if (err) console.log(err)
       if (!err) self.usedInputs = _.concat(self.usedInputs, useOutputs)
       // we don't want the array of spent inputs to grow forever so we'll limit it to 50.
       // Chances are by the time they get 50 in there some will have been confirmed and consumed anyway

@@ -17,7 +17,6 @@ module.exports = function (main) {
       ? 'http://localhost:9080'
       : `file://${self.main.baseDir}/index.html`
 
-    console.log(self.main)
     self.mainWindow = new self.main.BrowserWindow({
       title: 'FriendshipCoin - Wallet',
       backgroundColor: '#000',

@@ -62,9 +62,6 @@ lib.init({
       console.log('==== CONNECTED ====')
       lib.wallet.loaded = true
       lib.menu.configureWalletMenu()
-      lib.wallet.listAddressGroupings((err, addy) => {
-        console.log(addy)
-      })
     }
   )
 })
