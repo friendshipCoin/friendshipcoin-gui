@@ -1,0 +1,70 @@
+<div>
+    <div class="row mt-30">
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-wallet"></i>
+                    Wallet
+                </div>
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <table class="w-100">
+                                <tbody>
+                                    <!-- <tr>
+                                        <td><b>Available:</b></td>
+                                        <td>{{ balances.total - balances.pending }} FSC</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Pending:</b></td>
+                                        <td>{{ balances.pending }} FSC</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><hr /></td>
+                                    </tr> -->
+                                    <tr>
+                                        <td><b>Balance:</b></td>
+                                        <td>{{ balances.total }} FSC</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-docs"></i>
+                    Recent Transactions
+                </div>
+                <div class="card-block table-container">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(row, index) in transactionRows">
+                                        <td>{{ index + 1 }}</td>
+                                        <td>
+                                            <div>{{ row.date }}</div>
+                                            <div>{{ row.type }}</div>
+                                        </td>
+                                        <td>{{ row.amount }} FSC</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

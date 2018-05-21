@@ -1,0 +1,86 @@
+<div class="row">
+    <div class="col-12">
+
+        <div class="table-above row no-gutters form-inline">
+            <div class="col-6 no-padding">
+                <div v-if="paginate && hasSizeOptions" class="form-group">
+                    <label for="filter">
+                        <select v-model="store.pageSize" class="form-control record-count" @change.stop="">
+                            <option v-for="size in sizeOptions" :value="size">{{ size }}</option>
+                        </select>
+                        records per page
+                    </label>
+                </div>
+            </div>
+            <div class="col-6 no-padding">
+                <div v-if="filterable" class="form-group float-right">
+                    <label for="filter">
+                        <span>Search:</span>
+                        <input type="text" class="form-control input-search" v-model="store.filter" placeholder="">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">
+                        No
+                    </th>
+                    <th v-for="headColumn in columnProps" :style="{'text-align': headColumn.align}">
+                        {{ headColumn.label }}
+                        <span
+                            v-if="headColumn.sortable"
+                            :class="getHeaderColumnClass(headColumn)"
+                            @click="store.sortByField(headColumn.id)"
+                        ></span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(row, index) in store.visibleRows" @click="onSelectRow(row)">
+                    <td class="text-center">
+                        {{ index + 1 }}
+                    </td>
+                    <td v-for="rowColumn in columnProps" :style="{'text-align': rowColumn.align}">
+                        <span v-if="rowColumn.field">{{ getRowFromField(row, rowColumn.field) }}</span>
+                        <span v-if="rowColumn.callback">{{ rowColumn.callback(row) }}</span>
+                        <component v-if="rowColumn.component" :is="rowColumn.component" :row="row"></component>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="table-below row no-gutters form-inline">
+            <div class="col-6 no-padding">
+                <span>{{getStateString()}}</span>
+            </div>
+            <div class="col-6 no-padding">
+                <span v-if="paginate" class="btn-group float-right">
+                    <button class="btn btn-secondary" v-bind:disabled="store.page == 1" @click="store.setPage(1, $event)">&lt;&lt;</button>
+                    <button class="btn btn-secondary" v-bind:disabled="store.page == 1" @click="store.setPage(store.page - 1, $event)">&lt;</button>
+                    <button class="btn btn-secondary" v-if="store.page - 3 >= 1" disabled>...</button>
+                    <button class="btn btn-secondary" v-if="store.page - 2 >= 1" @click="store.setPage(store.page - 2, $event)">
+                        {{store.page - 2}}
+                    </button>
+                    <button class="btn btn-secondary" v-if="store.page - 1 >= 1" @click="store.setPage(store.page - 1, $event)">
+                        {{store.page - 1}}
+                    </button>
+                    <button class="btn btn-secondary active">
+                        {{ store.page }}
+                    </button>
+                    <button class="btn btn-secondary" v-if="store.page + 1 <= store.lastPage" @click="store.setPage(store.page + 1, $event)">
+                        {{store.page + 1}}
+                    </button>
+                    <button class="btn btn-secondary" v-if="store.page + 2 <= store.lastPage" @click="store.setPage(store.page + 2, $event)">
+                        {{store.page + 2}}
+                    </button>
+                    <button class="btn btn-secondary" v-if="store.page + 3 <= store.lastPage" disabled>...</button>
+                    <button class="btn btn-secondary" v-bind:disabled="store.page >= store.lastPage" @click="store.setPage(store.page + 1, $event)">&gt;</button>
+                    <button class="btn btn-secondary" v-bind:disabled="store.page >= store.lastPage" @click="store.setPage(store.lastPage, $event)">&gt;&gt;</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

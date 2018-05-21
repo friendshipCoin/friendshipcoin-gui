@@ -1,0 +1,147 @@
+<div class="app">
+    <Preloader v-if="isLoading" />
+    <div class="app-body mt-0" v-else>
+        <Sidebar></Sidebar>
+        <main class="main">
+            <div class="align-bottom">
+                <div v-if="noConnections">
+                    <p class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> No connections to the FriendshipCoin network.</p>
+                </div>
+                <div v-if="syncing">
+                    <p class="alert alert-info"><i class="fa fa-refresh fa-spin"></i> {{ syncMessage }}</p>
+                </div>
+                
+            </div>
+
+            <div class="container-fluid">
+                <router-view></router-view>
+            </div>
+        </main>
+    </div>
+
+    <!-- alert popup -->
+    <modal title="Alert" class="modal-info" v-model="isAlertOpen" @cancel="isAlertOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title" >{{alertTitle}}</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">{{alertBody}}</div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isAlertOpen = false; command = ''">
+                Close
+            </button>
+        </div>
+    </modal>
+
+    <!-- Debug Window -->
+    <modal title="Debug Window" class="modal-info" v-model="isDebugWindowOpen" @cancel="isDebugWindowOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">Debug Window</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+            <div class="row no-gutters history-panel" ref="historyPanel">
+                <div class="col-12 mb-15" v-for="history in historyList">
+                    <small>{{ history.date }}</small>
+                    <p class="mb-0" v-if="history.command">Command: {{ history.command }}</p>
+                    <p class="mb-0 text-info" v-if="history.welcomeMessage">{{ history.welcomeMessage }}</p>
+                    <div v-if="history.message && history.message.length > 0">
+                        <p class="text-info mb-0" v-for="message in history.message">
+                            {{ message }}
+                        </p>
+                    </div>
+                    <p class="mb-0 text-danger" v-if="history.error">{{ history.error }}</p>
+                </div>
+            </div>
+            <form @submit.prevent="onRunCommand()">
+                <div class="form-group">
+                    <label class="mt-10">Enter the command to run.</label>
+                    <input class="form-control" v-model="command" placeholder="Enter the command" />
+                </div>
+            </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isDebugWindowOpen = false; command = ''">
+                Close
+            </button>
+        </div>
+    </modal>
+
+    <!-- Wallet Unlock -->
+    <modal title="Unlock Wallet" class="modal-info" v-model="isUnlockWalletWindowOpen" @cancel="isUnlockWalletWindowOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">Unlock Wallet</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+            <p class="alert alert-success" v-if="success !== false">
+                {{ success }}
+            </p>
+            <p class="alert alert-danger" v-if="error !== false">
+                {{ error }}
+            </p>
+            <form @submit.prevent="onUnlockWallet()">
+                <div class="form-group">
+                    <label class="mt-10">Password: </label>
+                    <input class="form-control" type="password" v-model="password" placeholder="" />
+                </div>
+
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" id="customInChk1" value="1" class="custom-control-input" v-model="stakingOnly"> <label for="customInChk1" class="custom-control-label">Staking Only</label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="mt-10">
+                       <button class="btn btn-primary float-right" @click.prevent="onUnlockWallet()">
+                            Unlock Wallet 
+                        </button>
+                    </label>
+                </div>
+
+            </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isUnlockWalletWindowOpen = false; command = ''">
+                Close
+            </button>
+        </div>
+    </modal>
+    <!-- Wallet Encrypt -->
+    <modal title="Encrypt Wallet" class="modal-info" v-model="isEncryptWalletWindowOpen" @cancel="isEncryptWalletWindowOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">Encrypt Wallet</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+            <p class="alert alert-success" v-if="success !== false">
+                {{ success }}
+            </p>
+            <p class="alert alert-danger" v-if="error !== false">
+                {{ error }}
+            </p>
+            <form @submit.prevent="onEncryptWallet()">
+                <div class="form-group">
+                    <label class="mt-10">Password: </label>
+                    <input class="form-control" type="password" v-model="encPass" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label class="mt-10">Confirm Password: </label>
+                    <input class="form-control" type="password" v-model="encPass2" placeholder="" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="mt-10">
+                       <button class="btn btn-primary float-right" @click.prevent="onEncryptWallet()" :disabled="submitted" v-if="!success.length">
+                            Encrypt Wallet
+                        </button>
+                         <button class="btn btn-primary float-right" @click.prevent="onQuit()" v-if="success.length">
+                            Close Wallet (you'll have to restart manually)
+                        </button>
+                    </label>
+                </div>
+
+            </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isEncryptWalletWindowOpen = false; command = ''">
+                Close 
+            </button>
+        </div>
+    </modal>
+</div>

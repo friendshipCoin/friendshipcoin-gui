@@ -1,0 +1,87 @@
+<div>
+    <div class="row mt-30">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-paper-plane"></i>
+                    Send
+                    <i class="fa fa-btn fa-spinner fa-spin" v-if="false"></i>
+                </div>
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <p class="alert alert-success" v-if="success">
+                                {{ success }}
+                            </p>
+                            <p class="alert alert-danger" v-if="error">
+                                {{ error }}
+                            </p>
+                            <form @submit.prevent="onSend()">
+                                <div class="form-group">
+                                    <label class="mt-10">Receiver's Address <span class="text-danger">*</span></label>
+                                    <input class="form-control" v-model="address" placeholder="Receive Address" @keydown="error = false" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="mt-10">Amount <span class="text-danger">*</span></label>
+                                    <input class="form-control" v-model="amount" placeholder="Amount" @keydown="error = false" />
+                                </div>
+                                <div class="form-group" v-if='mightHaveMN'>
+                                    <label class="mt-10">
+                                        <input type="checkbox" v-model="protectMNCollat" /> Protect Masternode Collateral
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="mt-10">
+                                        <input type="checkbox" v-model="addToAddressBook" /> Add to address book
+                                    </label>
+                                </div>
+                                <div class="form-group" v-if="addToAddressBook">
+                                    <label class="mt-10">Receiver Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" v-model="receiverName" placeholder="Receiver Name" @keydown="error = false" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                  {{ balance }} FSC Available 
+                    <button class="btn btn-primary float-right" @click.prevent="onSend()">
+                        <i class="icon-paper-plane"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallet Unlock -->
+    <modal title="Unlock Wallet" class="modal-info" v-model="isUnlockWalletWindowOpen" @cancel="isUnlockWalletWindowOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">Unlock Wallet</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+            <form @submit.prevent="onUnlockWallet()">
+                <div class="form-group">
+                    <label class="mt-10">Password: </label>
+                    <input class="form-control" type="password" v-model="password" placeholder="" />
+                </div>
+
+                <div class="form-group">
+                    <label class="mt-10">
+                       <button class="btn btn-primary float-right" @click.prevent="onUnlockWallet()">
+                            Unlock Wallet
+                        </button>
+                    </label>
+                </div>
+
+            </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isUnlockWalletWindowOpen = false; command = ''">
+                Close
+            </button>
+        </div>
+    </modal>
+</div>

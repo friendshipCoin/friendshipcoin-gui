@@ -1,0 +1,173 @@
+<div>
+    <div class="row mt-30">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs" id="mnTabs">
+              <li class="nav-item">
+                <a v-bind:class="{ 'nav-link': true, active: myMasternodesActive }" id="my-tab" data-toggle="tab" href="#home" role="tab" v-on:click='setTab("myMasternodes")' >My Masternodes</a>
+              </li>
+              <li class="nav-item">
+                <a v-bind:class="{ 'nav-link': true, active: networkMasternodesActive }" id="network-tab" data-toggle="tab" href="#profile" role="tab" v-on:click='setTab("networkMasternodes")' >Network</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" v-if='activeTab == "myMasternodes"'>
+        <div class="col-md-12">
+
+            </button>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-notebook"></i>
+                    My Masternodes
+                </div>
+                <p class="alert alert-danger" v-if="startError">
+                  {{ startError }}
+                </p>
+                <p class="alert alert-success" v-if="startSuccess">
+                  {{ startSuccess }}
+                </p>
+
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <data-table
+                                :columns="masternodesColumns"
+                                :data="masternodesRows"
+                                editable
+                                paginate
+                                filterable>
+                            </data-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer" >
+
+
+                  <button class="btn btn-primary float-right " @click.prevent="showCreateModal = true; onCreateMasternode()">
+                      <i class="icon-plus"></i>
+                      Create Masternode
+                  </button>
+                  <button class="btn btn-secondary float-right " style="margin-right: 5px" @click.prevent="onStartMasternode()">
+                      <i class="fa fa-magic"></i>
+                      Start Masternodes
+                  </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" v-if='activeTab == "networkMasternodes"'>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-notebook"></i>
+                    Network Masternodes
+                </div>
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <data-table
+                                :columns="masternodesNetworkColumns"
+                                :data="masternodesNetworkRows"
+                                editable
+                                paginate
+                                filterable>
+                            </data-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <modal title="Create Masternode" class="modal-info" v-model="showCreateModal" @ok="showCreateModal = false" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+          <h4 class="modal-title">Create Masternode</h4>
+        </div>
+
+        <div slot="modal-body" class="modal-body">
+          <form @submit.prevent="onCreateMasternode()">
+            <div class="form-group">
+              <p class="alert alert-danger" v-if="error">
+                {{ error }}
+              </p>
+              <p class="alert alert-success" v-if="created">
+                {{ created }}
+              </p>
+            </div>
+            <div v-if="hasCollateral">
+            <div class="form-group">
+                <label class="mt-10">Alias </label>
+                <input class="form-control" v-model="mnData.alias" placeholder="Masternode Alias" @keydown="error = false" />
+            </div>
+            <div class="form-group">
+                <label class="mt-10">IP Address </label>
+                <input class="form-control" v-model="mnData.ipAddress" placeholder="Your Server IP" @keydown="error = false" />
+            </div>
+            <div class="form-group">
+                <label class="mt-10">Port </label>
+                <input class="form-control" v-model="mnData.port" placeholder="58008" @keydown="error = false" />
+            </div>
+            <div class="form-group">
+                <label class="mt-10">Private Key </label>
+                <input class="form-control" v-model="mnData.privateKey" @keydown="error = false" />
+            </div>
+            <div class="form-group">
+                <label class="mt-10">Masternode Transaction </label>
+                <input class="form-control" v-model="mnData.masternodeOutputs" @keydown="error = false" />
+            </div>
+            <div class="form-group">
+                <label class="mt-10">Masternode Output Index </label>
+                <input class="form-control" v-model="mnData.masternodeOutputIndex" @keydown="error = false" />
+            </div>
+          </div>
+          </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer" >
+          <button type="button" class="btn btn-default" @click="showCreateModal = false"  v-if='created === "" '>
+            Cancel
+          </button>
+          <button type="button" class="btn btn-info" @click="onExecuteCreate()" v-if='(error === "" || error === false) && created === "" '>
+            Create
+            <i class="fa fa-spinner fa-spin" v-if="status === 'CREATING'" />
+          </button>
+          <button type="button" class="btn btn-info" @click="showCreateModal = false" v-if='created != "" '>
+            Close
+            <i class="fa fa-spinner fa-spin" v-if="status === 'CREATING'" />
+          </button>
+        </div>
+    </modal>
+
+    <modal title="Unlock Wallet" class="modal-info" v-model="isUnlockWalletWindowOpen" @cancel="isUnlockWalletWindowOpen = false; command = ''" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+            <h4 class="modal-title">Unlock Wallet</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+            <form @submit.prevent="onUnlockWallet()">
+                <div class="form-group">
+                    <label class="mt-10">Password: </label>
+                    <input class="form-control" type="password" v-model="password" placeholder="" />
+                </div>
+
+                <div class="form-group">
+                    <label class="mt-10">
+                       <button class="btn btn-primary float-right" @click.prevent="onUnlockWallet()">
+                            Unlock Wallet
+                        </button>
+                    </label>
+                </div>
+
+            </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-default" @click="isUnlockWalletWindowOpen = false; command = ''">
+                Close
+            </button>
+        </div>
+    </modal>
+</div>

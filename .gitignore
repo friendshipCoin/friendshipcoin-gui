@@ -1,0 +1,13 @@
+/node_modules
+/build/*.*
+/build/mac
+/dist
+/static/friendshipcoind.exe
+/static/friendshipcoind
+
+npm-debug.log
+yarn-error.log
+yarn.lock
+.lock
+.electron-vue
+.idea

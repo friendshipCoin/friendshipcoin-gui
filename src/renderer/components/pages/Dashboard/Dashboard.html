@@ -1,0 +1,98 @@
+<div>
+    <div class="row mt-30">
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-wallet"></i>
+                    Balances
+                </div>
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <table class="w-100">
+                                <tbody>
+                                    <tr>
+                                        <td><b>Available:</b></td>
+                                        <td>{{ balances.available }} FSC</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Stake:</b></td>
+                                        <td>{{ balances.stake }} FSC</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><hr /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Total:</b></td>
+                                        <td>{{ balances.available + balances.stake }} FSC</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-wallet"></i>
+                    Staking
+                </div>
+                <div class="card-block">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <table class="w-100">
+                                <tbody>
+                                    <tr>
+                                        <td><b>Enabled:</b></td>
+                                        <td>{{ staking.enabled }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Staking:</b></td>
+                                        <td>{{ staking.staking }}</td>
+                                    </tr>
+                                    <tr v-if="staking.staking == 'YES'">
+                                        <td><b>Expected Time to Earn Reward:</b></td>
+                                        <td>{{ staking.expectedtime }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-docs"></i>
+                    Recent Transactions
+                </div>
+                <div class="card-block table-container">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(row, index) in transactionRows">
+                                        <td>{{ row.type }}</td>
+                                        <td>
+                                            <div>{{ row.date }}</div>
+                                        </td>
+                                        <td>{{ row.amount }} FSC</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

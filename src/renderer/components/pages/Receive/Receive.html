@@ -1,0 +1,63 @@
+<div>
+    <div class="row mt-30">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="icon-notebook"></i>
+                    Receive Addresses
+                    <i class="fa fa-btn fa-spinner fa-spin" v-if="false"></i>
+                </div>
+                <div class="card-block">
+                  <p class="alert alert-success" v-if="success">
+                    {{ success }}
+                  </p>
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <data-table
+                                :columns="receiveAddressColumns"
+                                :data="receiveAddressRows"
+                                editable
+                                paginate
+                                filterable>
+                            </data-table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary float-right" @click.prevent="showCreateModal = true; newAddress = {}">
+                        <i class="icon-plus"></i>
+                        New Receive Address
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <modal title="Create New Receive Address" class="modal-info" v-model="showCreateModal" @ok="showCreateModal = false" effect="fade/zoom">
+        <div slot="modal-header" class="modal-header">
+          <h4 class="modal-title">Create New Receive Address</h4>
+        </div>
+        <div slot="modal-body" class="modal-body">
+          <form @submit.prevent="onCreateAddress()">
+            <div class="form-group">
+              <label class="mt-10">Label <span class="text-danger">*</span></label>
+              <input class="form-control" v-model="label" placeholder="Label" @keydown="error = false" />
+              <p class="text-danger" v-if="error">
+                {{ error }}
+              </p>
+            </div>
+          </form>
+        </div>
+        <div slot="modal-footer" class="modal-footer">
+          <button type="button" class="btn btn-default" @click="showCreateModal = false">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-info" @click="onCreateAddress()">
+            Create
+            <i class="fa fa-spinner fa-spin" v-if="status === 'CREATING'" />
+          </button>
+        </div>
+    </modal>
+</div>
