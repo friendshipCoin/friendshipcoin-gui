@@ -9,6 +9,5 @@ npm-debug.log
 yarn-error.log
 yarn.lock
 .lock
-.electron-vue
-.idea 
+.idea
 /src/friendshipcoin-darwin-x64
