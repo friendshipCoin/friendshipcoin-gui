@@ -6,7 +6,7 @@
 [![Discord](https://img.shields.io/badge/chat-on_discord-7289da.svg)](https://discord.gg/UXR9We)
 
 # FriendshipCoin GUI Wallet
-Cross Platform Desktop FSC Wallet built with Electron
+Cross Platform Desktop FSC Wallet built with Electron.  This is alpha software so use at your own risk.  Make sure you back up your FriendshipCoin wallet before running this.
 
 ### Pre-built Downloads
 * _Windows_ - https://friendshipcoin.com/download/FriendshipCoinWin64.zip
@@ -60,6 +60,13 @@ _Install Dependencies_
 ```
 yarn
 ```
+
+### Get the FriendshipCoin Daemon Binary
+*IMPORTANT* - This GUI Wallet is basically a wrapper around the FriendshipCoin RPC so you need the daemon binary in order for this to function.  Go to [FriendshipCoin-Core](https://github.com/friendshipCoin/friendshipcoin-core/releases) and get the release for whichever platform you are running.
+
+Copy the binary into the `static` folder of the project.  If that binary is not in the `static` folder the project will not run correctly.
+
+### Run the application
 
 _Run in development mode_
 ```
