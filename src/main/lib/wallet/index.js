@@ -220,6 +220,7 @@ module.exports = function (main) {
     let useSingle = _.find(outputs, (output) => output.amount >= toObj.amount && output.address !== toObj.address && !_.find(self.usedInputs, {txid: output.txid, vout: output.vout}))
     if (useSingle) {
       console.log('USE SINGLE', useSingle)
+      outputTotal = useSingle.amount
       useOutputs.push(useSingle)
     } else {
       // if not, loop over the unspent until we sum up enough to send
@@ -245,15 +246,18 @@ module.exports = function (main) {
     async.waterfall([
       (next) => {
         // if there is no change, move on
-        if (outputTotal === toObj.amount + minerFee) return next(null, false)
-        self.getNewAddress((err, address) => {
+        if (outputTotal === toObj.amount + minerFee) return next()
+        self.getNewAddress('', (err, address) => {
           if (err) return next(err)
+          console.log('output total', outputTotal)
+          console.log('new address', address)
           // calculate how much change to send but leave some for a miner fee
           sendTo[address] = outputTotal - toObj.amount - minerFee
           next()
         })
       },
       (next) => {
+        console.log(sendTo)
         self._request('createrawtransaction', [useOutputs, sendTo], next)
       },
       (rawtx, next) => {
