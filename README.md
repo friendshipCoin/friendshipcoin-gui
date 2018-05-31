@@ -49,6 +49,11 @@ npm install -g yarn
 ```
 The application may work fine with `npm` but `yarn` is recommended.  
 
+### Install Vue-Cli
+```
+npm install -g vue-cli 
+```
+
 ### Get the Source
 ```
 git clone https://github.com/friendshipCoin/friendshipcoin-gui.git

@@ -158,9 +158,7 @@ module.exports = function (main) {
   }
 
   self.listUnspent = function (allDone) {
-    self._request('listunspent', [1], (err, res) => {
-      allDone(err, res)
-    })
+    self._request('listunspent', [1], allDone)
   }
 
   self.getMNUTXOSync = (unspent) => {
@@ -216,17 +214,45 @@ module.exports = function (main) {
     let sendTo = {}
     let outputTotal = 0
     let useOutputs = []
+    let minerFee = 0.0001
     sendTo[toObj.address] = toObj.amount
-
-    for (let o = 0; o < outputs.length; o++) {
-      if (!_.find(self.usedInputs, {txid: outputs[o].txid, vout: outputs[o].vout})) {
-        useOutputs.push({txid: outputs[o].txid, vout: outputs[o].vout})
-        outputTotal += outputs[o].amount
-        if (outputTotal >= toObj.amount) break
+    // check to see if a single unspent output would cover the transaction
+    let useSingle = _.find(outputs, (output) => output.amount >= toObj.amount && output.address !== toObj.address && !_.find(self.usedInputs, {txid: output.txid, vout: output.vout}))
+    if (useSingle) {
+      console.log('USE SINGLE', useSingle)
+      useOutputs.push(useSingle)
+    } else {
+      // if not, loop over the unspent until we sum up enough to send
+      for (let o = 0; o < outputs.length; o++) {
+        // check to make sure this output hasn't been used already and that the address of the output doesn't match the address of the receiver
+        if (!_.find(self.usedInputs, {txid: outputs[o].txid, vout: outputs[o].vout}) && outputs[0].address !== toObj.address) {
+          useOutputs.push({txid: outputs[o].txid, vout: outputs[o].vout})
+          outputTotal += outputs[o].amount
+          if (outputTotal >= toObj.amount + minerFee) break
+        }
       }
     }
 
+    if (!useOutputs.length) {
+      let errorMessage = JSON.stringify({
+        error: {
+          message: `Unable send coins from an address to the same address.`
+        }
+      })
+      return allDone({message: errorMessage}, {})
+    }
+
     async.waterfall([
+      (next) => {
+        // if there is no change, move on
+        if (outputTotal === toObj.amount + minerFee) return next(null, false)
+        self.getNewAddress((err, address) => {
+          if (err) return next(err)
+          // calculate how much change to send but leave some for a miner fee
+          sendTo[address] = outputTotal - toObj.amount - minerFee
+          next()
+        })
+      },
       (next) => {
         self._request('createrawtransaction', [useOutputs, sendTo], next)
       },
@@ -237,7 +263,9 @@ module.exports = function (main) {
         self._request('sendrawtransaction', [signedtx.hex], next)
       }
     ], (err, res) => {
+      if (err) console.log(err)
       if (!err) self.usedInputs = _.concat(self.usedInputs, useOutputs)
+      console.log('USED', self.usedInputs)
       // we don't want the array of spent inputs to grow forever so we'll limit it to 50.
       // Chances are by the time they get 50 in there some will have been confirmed and consumed anyway
       if (self.usedInputs.length > 50) self.usedInputs.slice(0, 50)
