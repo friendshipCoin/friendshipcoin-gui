@@ -42,7 +42,7 @@ module.exports = function (main) {
 
     if (os.type() !== 'Windows_NT') {
       let checkDir = path.join(self.datadir, 'friendshipcoind')
-      if (self.app.util.fileExists(checkDir)) return self.loadDaemon(allDone)
+      // if (self.app.util.fileExists(checkDir)) return self.loadDaemon(allDone)
       console.log('Copy the Daemon to the .friendshipcoin folder')
       let daemonPath = path.join(self.daemondir, 'friendshipcoind')
       self.app.util.copyFile(daemonPath, checkDir, () => {
@@ -51,7 +51,7 @@ module.exports = function (main) {
       })
     } else {
       // only run this if we're on windows
-      if (fs.existsSync(`${self.datadir}${self.pathSep}friendshipcoind.exe`)) return self.loadDaemon(allDone)
+      // if (fs.existsSync(`${self.datadir}${self.pathSep}friendshipcoind.exe`)) return self.loadDaemon(allDone)
       extract(`${self.daemondir}${self.pathSep}friendshipcoind.zip`, {dir: self.datadir}, (err) => {
         if (err) throw err
         self.loadDaemon(allDone)
