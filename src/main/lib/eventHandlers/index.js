@@ -131,21 +131,12 @@ module.exports = function (main) {
     })
 
     self.main.ipcMain.on('SEND_TO_ADDRESS', (event, arg) => {
-      if (arg.protectMNCollat === true) {
-        self.app.wallet.sendProtectMNCollateral(arg, (err, data) => {
-          event.returnValue = {
-            err: err ? { message: err.message } : null,
-            data
-          }
-        })
-      } else {
-        self.app.wallet.sendToAddress(arg, (err, data) => {
-          event.returnValue = {
-            err: err ? { message: err.message } : null,
-            data
-          }
-        })
-      }
+      self.app.wallet.sendToAddress(arg, (err, data) => {
+        event.returnValue = {
+          err: err ? { message: err.message } : null,
+          data
+        }
+      })
     })
 
     self.main.ipcMain.on('UNLOCK_WALLET', (event, arg) => {

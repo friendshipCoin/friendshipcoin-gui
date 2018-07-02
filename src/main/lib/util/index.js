@@ -23,14 +23,7 @@ module.exports = function (main) {
   }
 
   self.fileExists = function (path) {
-    let exists = true
-    try {
-      fs.statSync(path)
-    } catch (err) {
-      exists = false
-    }
-
-    return exists
+    return fs.existsSync(path)
   }
 
   self.copyFile = function (sourceFile, destFile, allDone) {

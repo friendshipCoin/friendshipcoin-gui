@@ -5,6 +5,7 @@ const fs = require('fs')
 const os = require('os')
 const _ = require('lodash')
 const async = require('async')
+const path = require('path')
 
 module.exports = function (main) {
   const self = this
@@ -14,7 +15,7 @@ module.exports = function (main) {
     self.loaded = false
     self.pwd = app.mydir
     self.datadir = app.mydir
-    self.daemondir = global.__static
+    self.daemondir = global.__static || path.join(__dirname, '/static')
     self.argString = `-datadir="${self.datadir}" -rpcuser=user -rpcpassword=simplepassword123 -rpcallowip=127.0.0.1`
     self.daemonFile = 'friendshipcoind'
     self.pathSep = '/'
@@ -40,8 +41,11 @@ module.exports = function (main) {
     })
 
     if (os.type() !== 'Windows_NT') {
-      if (self.app.util.fileExists(`${self.datadir}${self.pathSep}friendshipcoind`)) return self.loadDaemon(allDone)
-      self.app.util.copyFile(`${self.daemondir}${self.pathSep}friendshipcoind`, `${self.datadir}${self.pathSep}friendshipcoind`, () => {
+      let checkDir = path.join(self.datadir, 'friendshipcoind')
+      if (self.app.util.fileExists(checkDir)) return self.loadDaemon(allDone)
+      console.log('Copy the Daemon to the .friendshipcoin folder')
+      let daemonPath = path.join(self.daemondir, 'friendshipcoind')
+      self.app.util.copyFile(daemonPath, checkDir, () => {
         fs.chmodSync(`${self.datadir}${self.pathSep}${self.daemonFile}`, '0755')
         self.loadDaemon(allDone)
       })

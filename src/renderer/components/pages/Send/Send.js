@@ -63,8 +63,7 @@ export default {
       }
       const result = this.$electron.ipcRenderer.sendSync('SEND_TO_ADDRESS', {
         address: this.address,
-        amount,
-        protectMNCollat: this.protectMNCollat
+        amount
       })
       if (result.err) {
         this.success = false
